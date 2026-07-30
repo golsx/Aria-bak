@@ -84,31 +84,25 @@ public class DownloadPopupWindow extends AbsPopupWindow implements View.OnClickL
 
   @Override
   public void onClick(View view) {
-    switch (view.getId()) {
-      case R.id.start:
-        if (mTaskId != -1) {
-          Aria.download(this)
-              .load(DOWNLOAD_URL)
-              .setFilePath(Environment.getExternalStorageDirectory().getPath() + "/消消乐.apk")
-              .create();
-          mStart.setText(getContext().getString(R.string.stop));
-          break;
-        }
-        if (Aria.download(this).load(mTaskId).isRunning()) {
-          Aria.download(this).load(mTaskId).stop();
-          mStart.setText(getContext().getString(R.string.resume));
-        } else {
-          Aria.download(this).load(mTaskId).resume();
-          mStart.setText(getContext().getString(R.string.stop));
-        }
-        break;
-
-      case R.id.cancel:
-
-        Aria.download(this).load(mTaskId).cancel();
-        mStart.setText(getContext().getResources().getString(R.string.start));
-        mTaskId = -1;
-        break;
+    int id = view.getId();
+    if (id == R.id.start) {
+      if (mTaskId == -1) {
+        mTaskId = Aria.download(this)
+            .load(DOWNLOAD_URL)
+            .setFilePath(Environment.getExternalStorageDirectory().getPath() + "/消消乐.apk")
+            .create();
+        mStart.setText(getContext().getString(R.string.stop));
+      } else if (Aria.download(this).load(mTaskId).isRunning()) {
+        Aria.download(this).load(mTaskId).stop();
+        mStart.setText(getContext().getString(R.string.resume));
+      } else {
+        Aria.download(this).load(mTaskId).resume();
+        mStart.setText(getContext().getString(R.string.stop));
+      }
+    } else if (id == R.id.cancel) {
+      Aria.download(this).load(mTaskId).cancel();
+      mStart.setText(getContext().getResources().getString(R.string.start));
+      mTaskId = -1;
     }
   }
 

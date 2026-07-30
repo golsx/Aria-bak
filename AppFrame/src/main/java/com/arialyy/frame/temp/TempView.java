@@ -7,7 +7,7 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.lyy.frame.R;
+import com.arialyy.frame.R;
 
 /**
  * Created by lyy on 2016/1/11.

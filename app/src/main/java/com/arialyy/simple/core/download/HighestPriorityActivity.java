@@ -116,58 +116,53 @@ public class HighestPriorityActivity extends BaseActivity<ActivityHighestPriorit
   }
 
   @Override public boolean onMenuItemClick(MenuItem item) {
-    switch (item.getItemId()) {
-      case R.id.add_task:
-        List<DownloadEntity> temp = getModule(DownloadModule.class).getHighestTestList();
-        for (DownloadEntity entity : temp) {
-          String url = entity.getUrl();
-          if (mRecord.contains(url)) {
-            continue;
+      int itemId = item.getItemId();
+      if (itemId == R.id.add_task) {
+          List<DownloadEntity> temp = getModule(DownloadModule.class).getHighestTestList();
+          for (DownloadEntity entity : temp) {
+              String url = entity.getUrl();
+              if (mRecord.contains(url)) {
+                  continue;
+              }
+              mAdapter.addDownloadEntity(entity);
+              mRecord.add(url);
           }
-          mAdapter.addDownloadEntity(entity);
-          mRecord.add(url);
-        }
-        mAdapter.notifyDataSetChanged();
-        break;
-      case R.id.help:
-        String title = "最高优先级任务介绍";
-        String msg = " 将任务设置为最高优先级任务，最高优先级任务有以下特点：\n"
-            + " 1、在下载队列中，有且只有一个最高优先级任务\n"
-            + " 2、最高优先级任务会一直存在，直到用户手动暂停或任务完成\n"
-            + " 3、任务调度器不会暂停最高优先级任务\n"
-            + " 4、用户手动暂停或任务完成后，第二次重新执行该任务，该命令将失效\n"
-            + " 5、如果下载队列中已经满了，则会停止队尾的任务，当高优先级任务完成后，该队尾任务将自动执行\n"
-            + " 6、把任务设置为最高优先级任务后，将自动执行任务，不需要重新调用start()启动任务";
-        showMsgDialog(title, msg);
-        break;
-    }
+          mAdapter.notifyDataSetChanged();
+      } else if (itemId == R.id.help) {
+          String title = "最高优先级任务介绍";
+          String msg = " 将任务设置为最高优先级任务，最高优先级任务有以下特点：\n"
+                  + " 1、在下载队列中，有且只有一个最高优先级任务\n"
+                  + " 2、最高优先级任务会一直存在，直到用户手动暂停或任务完成\n"
+                  + " 3、任务调度器不会暂停最高优先级任务\n"
+                  + " 4、用户手动暂停或任务完成后，第二次重新执行该任务，该命令将失效\n"
+                  + " 5、如果下载队列中已经满了，则会停止队尾的任务，当高优先级任务完成后，该队尾任务将自动执行\n"
+                  + " 6、把任务设置为最高优先级任务后，将自动执行任务，不需要重新调用start()启动任务";
+          showMsgDialog(title, msg);
+      }
     return true;
   }
 
   public void onClick(View view) {
-    switch (view.getId()) {
-      case R.id.start:
-        if (AppUtil.chekEntityValid(mEntity)) {
-          String text = ((TextView) view).getText().toString();
-          if (text.equals("重新开始？") || text.equals("开始")) {
-          } else {
-            Aria.download(this).load(mEntity.getId()).resume();
+      int id = view.getId();
+      if (id == R.id.start) {
+          if (AppUtil.chekEntityValid(mEntity)) {
+              String text = ((TextView) view).getText().toString();
+              if (text.equals("重新开始？") || text.equals("开始")) {
+              } else {
+                  Aria.download(this).load(mEntity.getId()).resume();
+              }
           }
-        }
-        ((TextView) view).setText(getString(R.string.stop));
-        break;
-      case R.id.stop:
-        if (AppUtil.chekEntityValid(mEntity)) {
-          Aria.download(this).load(mEntity.getId()).stop();
-        }
-        ((TextView) view).setText(getString(R.string.resume));
-        break;
-      case R.id.cancel:
-        if (AppUtil.chekEntityValid(mEntity)) {
-          Aria.download(this).load(mEntity.getId()).cancel();
-        }
-        break;
-    }
+          ((TextView) view).setText(getString(R.string.stop));
+      } else if (id == R.id.stop) {
+          if (AppUtil.chekEntityValid(mEntity)) {
+              Aria.download(this).load(mEntity.getId()).stop();
+          }
+          ((TextView) view).setText(getString(R.string.resume));
+      } else if (id == R.id.cancel) {
+          if (AppUtil.chekEntityValid(mEntity)) {
+              Aria.download(this).load(mEntity.getId()).cancel();
+          }
+      }
   }
 
   /**

@@ -74,30 +74,25 @@ public class DownloadDialog extends AbsDialog implements View.OnClickListener {
 
   @Override
   public void onClick(View view) {
-    switch (view.getId()) {
-      case R.id.start:
-        if (mTaskId == -1) {
-          mTaskId = Aria.download(this)
-              .load(DOWNLOAD_URL)
-              .setFilePath(Environment.getExternalStorageDirectory().getPath() + "/女神危机.apk")
-              .create();
-          mStart.setText(getContext().getString(R.string.stop));
-          break;
-        }
-        if (Aria.download(this).load(mTaskId).isRunning()) {
-          Aria.download(this).load(mTaskId).stop();
-          mStart.setText(getContext().getString(R.string.resume));
-        } else {
-          Aria.download(this).load(mTaskId).resume();
-          mStart.setText(getContext().getString(R.string.stop));
-        }
-        break;
-
-      case R.id.cancel:
-        Aria.download(this).load(mTaskId).cancel();
-        mTaskId = -1;
-        mStart.setText(getContext().getString(R.string.start));
-        break;
+    int id = view.getId();
+    if (id == R.id.start) {
+      if (mTaskId == -1) {
+        mTaskId = Aria.download(this)
+            .load(DOWNLOAD_URL)
+            .setFilePath(Environment.getExternalStorageDirectory().getPath() + "/女神危机.apk")
+            .create();
+        mStart.setText(getContext().getString(R.string.stop));
+      } else if (Aria.download(this).load(mTaskId).isRunning()) {
+        Aria.download(this).load(mTaskId).stop();
+        mStart.setText(getContext().getString(R.string.resume));
+      } else {
+        Aria.download(this).load(mTaskId).resume();
+        mStart.setText(getContext().getString(R.string.stop));
+      }
+    } else if (id == R.id.cancel) {
+      Aria.download(this).load(mTaskId).cancel();
+      mTaskId = -1;
+      mStart.setText(getContext().getString(R.string.start));
     }
   }
 

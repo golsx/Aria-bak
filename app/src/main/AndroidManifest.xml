@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:sharedUserId="com.arialyy"
-    package="com.arialyy.simple">
+    android:sharedUserId="com.arialyy">
 
   <application
       android:name="com.arialyy.simple.base.BaseApplication"
@@ -13,43 +12,41 @@
       android:supportsRtl="true"
       android:theme="@style/AppTheme.NoActionBar"
       tools:ignore="GoogleAppIndexingWarning">
-    <!--android:name=".test.TestFTPDirActivity"-->
-    <!--android:name=".test.TestFTPActivity"-->
-    <!--android:name=".download.group.DownloadGroupActivity"-->
-    <!--android:name=".MainActivity"-->
+
     <activity
         android:name=".MainActivity"
+        android:exported="true"
         android:label="@string/app_name">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
-
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
 
-    <activity android:name=".core.download.fragment.MultiFragmentActivity"/>
-    <activity android:name=".core.upload.SFtpUploadActivity" />
-    <activity android:name=".core.download.SFtpDownloadActivity" />
-    <activity android:name=".core.download.DownloadActivity" />
-    <activity android:name=".core.download.SingleTaskActivity" />
-    <activity android:name=".core.download.mutil.MultiTaskListActivity" />
-    <activity android:name=".core.download.fragment.FragmentActivity" />
-    <activity android:name=".core.download.mutil.MultiDownloadActivity" />
-    <activity android:name=".core.download.HighestPriorityActivity" />
-    <activity android:name=".core.download.group.DownloadGroupActivity" />
-    <activity android:name=".core.download.FtpDownloadActivity" />
-    <activity android:name=".core.download.group.FTPDirDownloadActivity" />
-    <activity android:name=".core.upload.HttpUploadActivity" />
-    <activity android:name=".core.upload.FtpUploadActivity" />
-    <activity android:name=".core.download.KotlinDownloadActivity" />
-    <activity android:name=".core.download.ComponentActivity" />
+    <activity android:name=".core.download.fragment.MultiFragmentActivity" android:exported="false"/>
+    <activity android:name=".core.upload.SFtpUploadActivity" android:exported="false"/>
+    <activity android:name=".core.download.SFtpDownloadActivity" android:exported="false"/>
+    <activity android:name=".core.download.DownloadActivity" android:exported="false"/>
+    <activity android:name=".core.download.SingleTaskActivity" android:exported="false"/>
+    <activity android:name=".core.download.mutil.MultiTaskListActivity" android:exported="false"/>
+    <activity android:name=".core.download.fragment.FragmentActivity" android:exported="false"/>
+    <activity android:name=".core.download.mutil.MultiDownloadActivity" android:exported="false"/>
+    <activity android:name=".core.download.HighestPriorityActivity" android:exported="false"/>
+    <activity android:name=".core.download.group.DownloadGroupActivity" android:exported="false"/>
+    <activity android:name=".core.download.FtpDownloadActivity" android:exported="false"/>
+    <activity android:name=".core.download.group.FTPDirDownloadActivity" android:exported="false"/>
+    <activity android:name=".core.upload.HttpUploadActivity" android:exported="false"/>
+    <activity android:name=".core.upload.FtpUploadActivity" android:exported="false"/>
+    <activity android:name=".core.download.KotlinDownloadActivity" android:exported="false"/>
+    <activity android:name=".core.download.ComponentActivity" android:exported="false"/>
     <activity
         android:name=".core.FullScreenCodeActivity"
+        android:exported="false"
         android:screenOrientation="landscape"
         android:theme="@style/FullScreen"
         android:windowSoftInputMode="stateHidden|adjustResize" />
-    <activity android:name=".core.download.m3u8.M3U8VodDLoadActivity" />
-    <activity android:name=".core.download.m3u8.M3U8LiveDLoadActivity" />
+    <activity android:name=".core.download.m3u8.M3U8VodDLoadActivity" android:exported="false"/>
+    <activity android:name=".core.download.m3u8.M3U8LiveDLoadActivity" android:exported="false"/>
 
     <provider
         android:name="androidx.core.content.FileProvider"
@@ -61,12 +58,20 @@
           android:resource="@xml/aria_fileprovider_paths" />
     </provider>
 
-    <service android:name=".core.download.service.DownloadService" />
+    <service android:name=".core.download.service.DownloadService" android:exported="false"/>
+
+    <!-- LeakCanary activity added for explicit exported attribute -->
+    <activity-alias
+        android:name="leakcanary.internal.activity.LeakLauncherActivity"
+        android:exported="true"
+        android:targetActivity="leakcanary.internal.activity.LeakActivity"
+        tools:node="merge"
+        tools:replace="android:targetActivity" />
+
   </application>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
   <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

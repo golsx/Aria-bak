@@ -99,30 +99,26 @@ import com.arialyy.simple.util.AppUtil;
   }
 
   public void onClick(View view) {
-    switch (view.getId()) {
-      case R.id.start:
-        if (!AppUtil.chekEntityValid(mEntity)) {
-          Aria.download(this)
-              .load(DOWNLOAD_URL)
-              .setFilePath(Environment.getExternalStorageDirectory().getPath() + "/放置江湖.apk")
-              .create();
-          getBinding().setStateStr(getString(R.string.stop));
-          break;
-        }
-        if (Aria.download(this).load(mEntity.getId()).isRunning()) {
-          Aria.download(this).load(mEntity.getId()).stop();
-          getBinding().setStateStr(getString(R.string.resume));
-        } else {
-          Aria.download(this).load(mEntity.getId()).resume();
-          getBinding().setStateStr(getString(R.string.stop));
-        }
-        break;
-
-      case R.id.cancel:
-        if (AppUtil.chekEntityValid(mEntity)) {
-          Aria.download(this).load(mEntity.getId()).cancel();
-        }
-        break;
+    int id = view.getId();
+    if (id == R.id.start) {
+      if (!AppUtil.chekEntityValid(mEntity)) {
+        Aria.download(this)
+            .load(DOWNLOAD_URL)
+            .setFilePath(Environment.getExternalStorageDirectory().getPath() + "/放置江湖.apk")
+            .create();
+        getBinding().setStateStr(getString(R.string.stop));
+      } else if (Aria.download(this).load(mEntity.getId()).isRunning()) {
+        Aria.download(this).load(mEntity.getId()).stop();
+        getBinding().setStateStr(getString(R.string.resume));
+      } else {
+        Aria.download(this).load(mEntity.getId()).resume();
+        getBinding().setStateStr(getString(R.string.stop));
+      }
+    } else if (id == R.id.cancel) {
+      if (AppUtil.chekEntityValid(mEntity)) {
+        Aria.download(this).load(mEntity.getId()).cancel();
+      }
     }
+
   }
 }

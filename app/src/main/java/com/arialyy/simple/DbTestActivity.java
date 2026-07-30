@@ -25,16 +25,13 @@ public class DbTestActivity extends BaseActivity<ActivityDbTestBinding> {
   }
 
   public void onClick(View view) {
-    switch (view.getId()) {
-      case R.id.insert:
-        insertManyRecord(10000);
-        break;
-      case R.id.search:
-        break;
-      case R.id.search_all:
-        searchAll();
-        break;
-    }
+      int id = view.getId();
+      if (id == R.id.insert) {
+          insertManyRecord(10000);
+      } else if (id == R.id.search) {
+      } else if (id == R.id.search_all) {
+          searchAll();
+      }
   }
 
   private void searchAll() {

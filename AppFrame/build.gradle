@@ -5,6 +5,7 @@ apply plugin: 'kotlin-kapt'
 android {
   compileSdkVersion rootProject.ext.compileSdkVersion
   buildToolsVersion rootProject.ext.buildToolsVersion
+  namespace "com.arialyy.frame"
 
   defaultConfig {
     minSdkVersion rootProject.ext.minSdkVersion
@@ -26,6 +27,16 @@ android {
   dataBinding {
     enabled = true
   }
+
+  compileOptions {
+      sourceCompatibility JavaVersion.VERSION_1_8
+      targetCompatibility JavaVersion.VERSION_1_8
+  }
+
+  kotlinOptions {
+      jvmTarget = '1.8'
+  }
+
   lintOptions {
     abortOnError false
   }

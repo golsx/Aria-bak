@@ -67,22 +67,19 @@ public class MultiTaskListActivity extends BaseActivity<ActivityMultiBinding> {
   }
 
   public void onClick(View view) {
-    switch (view.getId()) {
-      case R.id.num:
-        DownloadNumDialog dialog = new DownloadNumDialog(this);
-        dialog.show(getSupportFragmentManager(), "download_num");
-        break;
-      case R.id.stop_all:
-        //Aria.download(this).stopAllTask();
-        List<AbsEntity> list = Aria.download(this).getTotalTaskList();
-        for (AbsEntity entity : list){
-          Aria.download(this).load(entity.getId()).cancel(true);
-        }
-        //Aria.download(this).removeAllTask(false);
-        break;
-      case R.id.turn:
-        startActivity(new Intent(this, MultiDownloadActivity.class));
-        break;
+    int id = view.getId();
+    if (id == R.id.num) {
+      DownloadNumDialog dialog = new DownloadNumDialog(this);
+      dialog.show(getSupportFragmentManager(), "download_num");
+    } else if (id == R.id.stop_all) {
+      //Aria.download(this).stopAllTask();
+      List<AbsEntity> list = Aria.download(this).getTotalTaskList();
+      for (AbsEntity entity : list) {
+        Aria.download(this).load(entity.getId()).cancel(true);
+      }
+      //Aria.download(this).removeAllTask(false);
+    } else if (id == R.id.turn) {
+      startActivity(new Intent(this, MultiDownloadActivity.class));
     }
   }
 

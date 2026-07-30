@@ -107,15 +107,13 @@ public class ProgressLayout extends RelativeLayout implements View.OnClickListen
       return;
     }
 
-    switch (v.getId()) {
-      case R.id.del_bt:
-        listener.cancel(v, entity);
-        initState();
-        break;
-      case R.id.handle_bt:
-        handleTask(v);
-        break;
-    }
+      int id = v.getId();
+      if (id == R.id.del_bt) {
+          listener.cancel(v, entity);
+          initState();
+      } else if (id == R.id.handle_bt) {
+          handleTask(v);
+      }
   }
 
   private void initState() {

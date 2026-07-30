@@ -45,24 +45,14 @@ public class AnyRunActivity extends BaseActivity<ActivityTestBinding> {
   }
 
   public void onClick(View view) {
-    switch (view.getId()) {
-      case R.id.start:
-        //module.create(URL);
-        module.startFtp(URL);
-        break;
-      case R.id.stop:
-        module.stop(URL);
-        break;
-      case R.id.cancel:
-        module.cancel(URL);
-        //String newUrl = "ftp://192.168.29.140:21/download/11SDK_Demo-release.apk";
-        //Aria.download(this)
-        //    .loadFtp(URL)
-        //    .updateUrl(newUrl)
-        //    .login("lao", "123456")
-        //    .setFilePath(Environment.getExternalStorageDirectory().getPath() + "/")
-        //    .create();
-        break;
+    int id = view.getId();
+    if (id == R.id.start) {
+      //module.create(URL);
+      module.startFtp(URL);
+    } else if (id == R.id.stop) {
+      module.stop(URL);
+    } else if (id == R.id.cancel) {
+      module.cancel(URL);
     }
   }
 

@@ -163,30 +163,24 @@ public class M3U8VodDLoadActivity extends BaseActivity<ActivityM3u8VodBinding> {
   public boolean onMenuItemClick(MenuItem item) {
     int speed = -1;
     String msg = "";
-    switch (item.getItemId()) {
-      case R.id.help:
-        msg = "一些小知识点：\n"
-            + "1、你可以在注解中增加链接，用于指定被注解的方法只能被特定的下载任务回调，以防止progress乱跳\n"
-            + "2、当遇到网络慢的情况时，你可以先使用onPre()更新UI界面，待连接成功时，再在onTaskPre()获取完整的task数据，然后给UI界面设置正确的数据\n"
-            + "3、你可以在界面初始化时通过Aria.download(this).load(URL).getPercent()等方法快速获取相关任务的一些数据";
-        showMsgDialog("tip", msg);
-        break;
-      case R.id.speed_0:
-        speed = 0;
-        break;
-      case R.id.speed_128:
-        speed = 128;
-        break;
-      case R.id.speed_256:
-        speed = 256;
-        break;
-      case R.id.speed_512:
-        speed = 512;
-        break;
-      case R.id.speed_1m:
-        speed = 1024;
-        break;
-    }
+      int itemId = item.getItemId();
+      if (itemId == R.id.help) {
+          msg = "一些小知识点：\n"
+                  + "1、你可以在注解中增加链接，用于指定被注解的方法只能被特定的下载任务回调，以防止progress乱跳\n"
+                  + "2、当遇到网络慢的情况时，你可以先使用onPre()更新UI界面，待连接成功时，再在onTaskPre()获取完整的task数据，然后给UI界面设置正确的数据\n"
+                  + "3、你可以在界面初始化时通过Aria.download(this).load(URL).getPercent()等方法快速获取相关任务的一些数据";
+          showMsgDialog("tip", msg);
+      } else if (itemId == R.id.speed_0) {
+          speed = 0;
+      } else if (itemId == R.id.speed_128) {
+          speed = 128;
+      } else if (itemId == R.id.speed_256) {
+          speed = 256;
+      } else if (itemId == R.id.speed_512) {
+          speed = 512;
+      } else if (itemId == R.id.speed_1m) {
+          speed = 1024;
+      }
     if (speed > -1) {
       msg = item.getTitle().toString();
       Aria.download(this).setMaxSpeed(speed);

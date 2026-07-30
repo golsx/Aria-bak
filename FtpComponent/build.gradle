@@ -3,6 +3,7 @@ apply plugin: 'com.android.library'
 android {
   compileSdkVersion rootProject.ext.compileSdkVersion
   buildToolsVersion rootProject.ext.buildToolsVersion
+  namespace "com.arialyy.aria.ftp"
 
   defaultConfig {
     minSdkVersion rootProject.ext.minSdkVersion
@@ -23,11 +24,21 @@ android {
       proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
     }
   }
+
+  publishing {
+    singleVariant('release') {
+      withSourcesJar()
+      withJavadocJar()
+    }
+  }
+
   lintOptions {
     abortOnError false
   }
 
 }
+
+apply plugin: 'maven-publish'
 
 dependencies {
   implementation fileTree(dir: 'libs', include: ['*.jar'])

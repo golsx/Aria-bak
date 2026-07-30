@@ -86,13 +86,17 @@ afterEvaluate { project ->
         version PUBLISH_VERSION
 
         if (isAndroidProject) {
-          // 移除R文件，移除BuildConfig文件
-          generateReleaseBuildConfig.enabled = false
-          generateDebugBuildConfig.enabled = false
-          generateReleaseResValues.enabled = false
-          generateDebugResValues.enabled = false
-          // 使用了这个组件，就不需要自己aar、pom.withxml了
-          from components.release
+          // 安全检查 components.release
+          def releaseComponent = project.components.findByName('release')
+          if (releaseComponent) {
+            from releaseComponent
+          } else {
+            // 如果没找到 release，回退使用 default
+            def defaultComponent = project.components.findByName('default')
+            if (defaultComponent) {
+              from defaultComponent
+            }
+          }
 
           def variants = project.android.libraryVariants.findAll {
             it.buildType.name.equalsIgnoreCase('debug')
@@ -131,15 +135,15 @@ afterEvaluate { project ->
           project.clean.dependsOn(cleanJavadocTask)
 
           task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
-            classifier = 'javadoc'
+            archiveClassifier = 'javadoc'
             from androidJavadocs.destinationDir
-            baseName "${JAR_PREFIX}${project.name}"
+            archiveBaseName = "${JAR_PREFIX}${project.name}"
           }
 
           task androidSourcesJar(type: Jar) {
-            classifier = 'sources'
+            archiveClassifier = 'sources'
             from project.android.sourceSets.main.java.source
-            baseName "${JAR_PREFIX}${project.name}"
+            archiveBaseName = "${JAR_PREFIX}${project.name}"
 
             exclude "**/R.class"
             exclude "**/BuildConfig.class"
@@ -156,7 +160,7 @@ afterEvaluate { project ->
             exclude '**/R.class'
             exclude '**/R$*.class'
             exclude "**/BuildConfig.class"
-            baseName "${JAR_PREFIX}${project.name}-cache"
+            archiveBaseName = "${JAR_PREFIX}${project.name}-cache"
           }
 
           artifact androidLibraryJar
@@ -167,12 +171,12 @@ afterEvaluate { project ->
           from components.java
 
           task sourcesJar(type: Jar, dependsOn: classes) {
-            classifier = 'sources'
+            archiveClassifier = 'sources'
             from sourceSets.main.allSource
           }
 
           task javadocsJar(type: Jar, dependsOn: javadoc) {
-            classifier = 'javadoc'
+            archiveClassifier = 'javadoc'
             from javadoc.destinationDir
           }
 

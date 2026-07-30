@@ -15,7 +15,7 @@ import androidx.fragment.app.DialogFragment;
 import com.arialyy.frame.module.AbsModule;
 import com.arialyy.frame.module.IOCProxy;
 import com.arialyy.frame.util.StringUtil;
-import com.lyy.frame.R;
+import com.arialyy.frame.R;
 
 /**
  * Created by lyy on 2015/11/4.

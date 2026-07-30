@@ -137,23 +137,21 @@ import java.util.List;
 
   @Override
   public void onClick(View view) {
-    switch (view.getId()) {
-      case R.id.start:
-        Aria.download(getContext())
-            .loadGroup(mUrls)
-            .getSubTaskManager()
-            .startSubTask(mChildEntity.getUrl());
-        break;
-      case R.id.stop:
-        Aria.download(getContext())
-            .loadGroup(mUrls)
-            .getSubTaskManager()
-            .stopSubTask(mChildEntity.getUrl());
-        break;
-      //case R.id.cancel:
-      //  Aria.download(this).load(mUrls).getSubTaskManager().cancelSubTask(mChildEntity.getUrl());
-      //  break;
-    }
+      int id = view.getId();
+      if (id == R.id.start) {
+          Aria.download(getContext())
+                  .loadGroup(mUrls)
+                  .getSubTaskManager()
+                  .startSubTask(mChildEntity.getUrl());
+      } else if (id == R.id.stop) {
+          Aria.download(getContext())
+                  .loadGroup(mUrls)
+                  .getSubTaskManager()
+                  .stopSubTask(mChildEntity.getUrl());
+          //case R.id.cancel:
+          //  Aria.download(this).load(mUrls).getSubTaskManager().cancelSubTask(mChildEntity.getUrl());
+          //  break;
+      }
   }
 
   @Override protected void dataCallback(int result, Object obj) {

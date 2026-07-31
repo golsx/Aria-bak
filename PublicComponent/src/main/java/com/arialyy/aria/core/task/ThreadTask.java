@@ -189,7 +189,7 @@ public class ThreadTask implements IThreadTask, IThreadTaskObserver {
 
   @Override
   public boolean isDestroy() {
-    return Thread.currentThread().isInterrupted();
+    return isDestroy;
   }
 
   @Override protected void finalize() throws Throwable {
@@ -310,6 +310,9 @@ public class ThreadTask implements IThreadTask, IThreadTaskObserver {
   }
 
   @Override public synchronized void updateCompleteState() {
+    if (mTaskWrapper.getRequestType() == ITaskWrapper.M3U8_VOD && (isBreak() || !isLive())) {
+        return;
+    }
     ALog.i(TAG, String.format("任务【%s】线程__%s__完成, blockSize = %s", getTaskWrapper().getKey(),
         mRecord.threadId, mConfig.tempFile.length()));
     writeConfig(true, mRecord.endLocation);

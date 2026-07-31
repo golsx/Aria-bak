@@ -270,7 +270,7 @@ public final class M3U8ThreadTaskAdapter extends AbsThreadTaskAdapter {
    * 处理完成配置文件的更新或事件回调
    */
   private void handleComplete() {
-    if (getThreadTask().isBreak()) {
+    if (getThreadTask().isBreak() || !getThreadTask().isLive()) {
       return;
     }
     complete();

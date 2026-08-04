@@ -20,6 +20,7 @@ import com.arialyy.aria.core.ThreadRecord;
 import com.arialyy.aria.core.common.RecordHandler;
 import com.arialyy.aria.core.common.RecordHelper;
 import com.arialyy.aria.core.config.Configuration;
+import com.arialyy.aria.core.download.DTaskWrapper;
 import com.arialyy.aria.core.download.DownloadEntity;
 import com.arialyy.aria.core.loader.IRecordHandler;
 import com.arialyy.aria.core.wrapper.AbsTaskWrapper;
@@ -79,7 +80,11 @@ public final class HttpRecordHandler extends RecordHandler {
 
     int requestType = getWrapper().getRequestType();
     if (requestType == ITaskWrapper.D_HTTP || requestType == ITaskWrapper.DG_HTTP) {
-      record.isBlock = Configuration.getInstance().downloadCfg.isUseBlock();
+      DTaskWrapper wrapper = (DTaskWrapper) getWrapper();
+      Boolean useBlockOverride = wrapper.getUseBlockOverride();
+      record.isBlock = useBlockOverride != null
+          ? useBlockOverride
+          : Configuration.getInstance().downloadCfg.isUseBlock();
     } else {
       record.isBlock = false;
     }
@@ -101,7 +106,10 @@ public final class HttpRecordHandler extends RecordHandler {
         || ((HttpTaskOption) getWrapper().getTaskOption()).isChunked())) {
       return 1;
     }
-    int threadNum = Configuration.getInstance().downloadCfg.getThreadNum();
+    DTaskWrapper wrapper = (DTaskWrapper) getWrapper();
+    int threadNum = wrapper.getThreadNumOverride() > 0
+        ? wrapper.getThreadNumOverride()
+        : Configuration.getInstance().downloadCfg.getThreadNum();
     return getFileSize() <= IRecordHandler.SUB_LEN
         || getEntity().isGroupChild()
         || threadNum == 1

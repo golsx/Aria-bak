@@ -71,6 +71,22 @@ public class HttpNormalTarget extends AbsNormalTarget<HttpNormalTarget> {
   }
 
   /**
+   * 任务级设置下载线程数，优先于全局配置。
+   */
+  public HttpNormalTarget setThreadNum(int threadNum) {
+    ((DTaskWrapper) getTaskWrapper()).setThreadNumOverride(threadNum);
+    return this;
+  }
+
+  /**
+   * 任务级设置是否使用分块下载，优先于全局配置。
+   */
+  public HttpNormalTarget setUseBlock(boolean useBlock) {
+    ((DTaskWrapper) getTaskWrapper()).setUseBlockOverride(useBlock);
+    return this;
+  }
+
+  /**
    * 更新文件保存路径
    * 如：原文件路径 /mnt/sdcard/test.zip
    * 如果需要将test.zip改为game.zip，只需要重新设置文件路径为：/mnt/sdcard/game.zip

@@ -67,6 +67,22 @@ public class HttpBuilderTarget extends AbsBuilderTarget<HttpBuilderTarget> {
   }
 
   /**
+   * 任务级设置下载线程数，优先于全局配置。
+   */
+  public HttpBuilderTarget setThreadNum(int threadNum) {
+    ((DTaskWrapper) getTaskWrapper()).setThreadNumOverride(threadNum);
+    return this;
+  }
+
+  /**
+   * 任务级设置是否使用分块下载，优先于全局配置。
+   */
+  public HttpBuilderTarget setUseBlock(boolean useBlock) {
+    ((DTaskWrapper) getTaskWrapper()).setUseBlockOverride(useBlock);
+    return this;
+  }
+
+  /**
    * 设置文件存储路径，如果需要修改新的文件名，修改路径便可。
    * 如：原文件路径 /mnt/sdcard/test.zip
    * 如果需要将test.zip改为game.zip，只需要重新设置文件路径为：/mnt/sdcard/game.zip

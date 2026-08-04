@@ -54,6 +54,16 @@ public class DTaskWrapper extends AbsTaskWrapper<DownloadEntity> {
    */
   private String mTempFilePath;
 
+  /**
+   * 任务级线程数覆盖值，-1 表示不覆盖全局配置
+   */
+  private int threadNumOverride = -1;
+
+  /**
+   * 任务级分块模式覆盖值，null 表示不覆盖全局配置
+   */
+  private Boolean useBlockOverride = null;
+
   public DTaskWrapper(DownloadEntity entity) {
     super(entity);
   }
@@ -118,5 +128,21 @@ public class DTaskWrapper extends AbsTaskWrapper<DownloadEntity> {
 
   public void setTempFilePath(String mTempFilePath) {
     this.mTempFilePath = mTempFilePath;
+  }
+
+  public int getThreadNumOverride() {
+    return threadNumOverride;
+  }
+
+  public void setThreadNumOverride(int threadNumOverride) {
+    this.threadNumOverride = threadNumOverride;
+  }
+
+  public Boolean getUseBlockOverride() {
+    return useBlockOverride;
+  }
+
+  public void setUseBlockOverride(Boolean useBlockOverride) {
+    this.useBlockOverride = useBlockOverride;
   }
 }

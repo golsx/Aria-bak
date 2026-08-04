@@ -109,6 +109,7 @@ public class NormalThreadStateManager implements IThreadStateManager {
               if (mergeFile()) {
                 mListener.onComplete();
               } else {
+                ALog.d("handleMessage", "STATE_COMPLETE   mergeFile fail");
                 mListener.onFail(false, null);
               }
               quitLooper();
@@ -248,8 +249,13 @@ public class NormalThreadStateManager implements IThreadStateManager {
    */
   private boolean mergeFile() {
     if (mTaskRecord.threadNum == 1) {
+      ALog.d("mergeFile", "mTaskRecord.threadNum == 1");
       File targetFile = new File(mTaskRecord.filePath);
       if (targetFile.exists()){
+        ALog.d("mergeFile", "targetFile.exists()");
+        ALog.d("mergeFile", "targetFile.length() = " + targetFile.length());
+        ALog.d("mergeFile", "mTaskRecord.fileLength = " + mTaskRecord.fileLength);
+
         //没有获得文件长度：不支持断点续传
         if (mTaskRecord.fileLength == 0 && targetFile.length() != 0) {
           return true;
@@ -258,6 +264,8 @@ public class NormalThreadStateManager implements IThreadStateManager {
           return true;
         }
       }
+      ALog.d("mergeFile", "!targetFile.exists()");
+
       FileUtil.deleteFile(targetFile);
       File partFile = new File(String.format(IRecordHandler.SUB_PATH, mTaskRecord.filePath, 0));
       return partFile.renameTo(targetFile);

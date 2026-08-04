@@ -23,6 +23,7 @@ import com.arialyy.aria.http.BaseHttpThreadTaskAdapter;
 import com.arialyy.aria.http.ConnectionHelp;
 import com.arialyy.aria.util.ALog;
 import com.arialyy.aria.util.BufferedRandomAccessFile;
+import com.arialyy.aria.util.FileUtil;
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -70,6 +71,11 @@ final class HttpDThreadTaskAdapter extends BaseHttpThreadTaskAdapter {
         conn.setRequestProperty("Range",
             String.format("bytes=%s-%s", getThreadRecord().startLocation,
                 (getThreadRecord().endLocation - 1)));
+        ALog.d(TAG, String.format(
+            "download request, threadId=%s, range=%s, tempFile=%s, tempExists=%s, tempLength=%s, entityFileSize=%s, currentProgress=%s",
+            getThreadRecord().threadId, conn.getRequestProperty("Range"), getThreadConfig().tempFile.getAbsolutePath(),
+            getThreadConfig().tempFile.exists(), getThreadConfig().tempFile.length(), getEntity().getFileSize(),
+            getEntity().getCurrentProgress()));
       } else {
         ALog.w(TAG, "该下载不支持断点");
       }
@@ -81,6 +87,11 @@ final class HttpDThreadTaskAdapter extends BaseHttpThreadTaskAdapter {
         conn.setChunkedStreamingMode(0);
       }
       conn.connect();
+      handleRangeMismatchIfNeed(conn);
+      ALog.d(TAG, String.format(
+          "download response, threadId=%s, code=%s, contentRange=%s, contentLength=%s, contentEncoding=%s",
+          getThreadRecord().threadId, conn.getResponseCode(), conn.getHeaderField("Content-Range"),
+          conn.getHeaderField("Content-Length"), conn.getHeaderField("Content-Encoding")));
       // 传递参数
       if (mTaskOption.getRequestEnum() == RequestEnum.POST) {
         Map<String, String> params = mTaskOption.getParams();
@@ -113,7 +124,14 @@ final class HttpDThreadTaskAdapter extends BaseHttpThreadTaskAdapter {
         if (getThreadRecord().startLocation > 0) {
           file.seek(getThreadRecord().startLocation);
         }
+        ALog.d(TAG, String.format(
+            "before readNormal, threadId=%s, seekStart=%s, filePointer=%s, tempLength=%s, endLocation=%s",
+            getThreadRecord().threadId, getThreadRecord().startLocation, file.getFilePointer(),
+            file.length(), getThreadRecord().endLocation));
         readNormal(is, file);
+        ALog.d(TAG, String.format(
+            "after readNormal, threadId=%s, filePointer=%s, tempLength=%s, rangeProgress=%s",
+            getThreadRecord().threadId, file.getFilePointer(), file.length(), getRangeProgress()));
         handleComplete();
       }
     } catch (MalformedURLException e) {
@@ -247,6 +265,7 @@ final class HttpDThreadTaskAdapter extends BaseHttpThreadTaskAdapter {
       throws IOException {
     byte[] buffer = new byte[getTaskConfig().getBuffSize()];
     int len;
+    long totalRead = 0;
     while (getThreadTask().isLive() && (len = is.read(buffer)) != -1) {
       if (getThreadTask().isBreak()) {
         break;
@@ -254,14 +273,76 @@ final class HttpDThreadTaskAdapter extends BaseHttpThreadTaskAdapter {
       if (mSpeedBandUtil != null) {
         mSpeedBandUtil.limitNextBytes(len);
       }
+      long beforePointer = file.getFilePointer();
       file.write(buffer, 0, len);
+      totalRead += len;
+      long afterPointer = file.getFilePointer();
+      if (totalRead == len || totalRead % (1024 * 1024) < len) {
+        ALog.d(TAG, String.format(
+            "readNormal progress, threadId=%s, chunk=%s, totalRead=%s, beforePointer=%s, afterPointer=%s, rangeProgress=%s, endLocation=%s",
+            getThreadRecord().threadId, len, totalRead, beforePointer, afterPointer, getRangeProgress(),
+            getThreadRecord().endLocation));
+      }
       progress(len);
     }
+    ALog.d(TAG, String.format(
+        "readNormal finished, threadId=%s, totalRead=%s, finalPointer=%s, tempLength=%s, rangeProgress=%s, endLocation=%s",
+        getThreadRecord().threadId, totalRead, file.getFilePointer(), file.length(), getRangeProgress(),
+        getThreadRecord().endLocation));
   }
 
   /**
    * 处理完成配置文件的更新或事件回调
    */
+  private void handleRangeMismatchIfNeed(HttpURLConnection conn) throws IOException {
+    if (!mTaskWrapper.isSupportBP() || getThreadConfig().isBlock) {
+      return;
+    }
+    long requestStart = getThreadRecord().startLocation;
+    if (requestStart <= 0) {
+      return;
+    }
+    long responseStart = parseContentRangeStart(conn.getHeaderField("Content-Range"));
+    if (responseStart < 0 || responseStart == requestStart) {
+      return;
+    }
+    if (responseStart == 0) {
+      ALog.w(TAG, String.format(
+          "range mismatch fallback, threadId=%s, requestStart=%s, responseStart=%s, tempFile=%s, tempLength=%s",
+          getThreadRecord().threadId, requestStart, responseStart, getThreadConfig().tempFile.getAbsolutePath(),
+          getThreadConfig().tempFile.exists() ? getThreadConfig().tempFile.length() : -1));
+      FileUtil.deleteFile(getThreadConfig().tempFile);
+      FileUtil.createFile(getThreadConfig().tempFile);
+      getThreadRecord().startLocation = 0;
+      getThreadRecord().isComplete = false;
+      getThreadRecord().update();
+      resetProgress(0);
+      return;
+    }
+    throw new IOException(String.format("Unexpected Content-Range start, requestStart=%s, responseStart=%s",
+        requestStart, responseStart));
+  }
+
+  private long parseContentRangeStart(String contentRange) {
+    if (contentRange == null) {
+      return -1;
+    }
+    int spaceIndex = contentRange.indexOf(' ');
+    int dashIndex = contentRange.indexOf('-');
+    if (dashIndex <= 0) {
+      return -1;
+    }
+    int startIndex = spaceIndex >= 0 ? spaceIndex + 1 : 0;
+    if (startIndex >= dashIndex) {
+      return -1;
+    }
+    try {
+      return Long.parseLong(contentRange.substring(startIndex, dashIndex).trim());
+    } catch (NumberFormatException e) {
+      return -1;
+    }
+  }
+
   private void handleComplete() {
     if (getThreadTask().isBreak()) {
       return;

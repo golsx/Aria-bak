@@ -121,4 +121,10 @@ public abstract class AbsThreadTaskAdapter implements IThreadTaskAdapter {
       mObserver.updateProgress(len);
     }
   }
+
+  protected void resetProgress(long progress) {
+    if (mObserver != null) {
+      mObserver.resetThreadProgress(progress);
+    }
+  }
 }

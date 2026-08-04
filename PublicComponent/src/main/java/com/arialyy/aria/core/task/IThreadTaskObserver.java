@@ -57,4 +57,9 @@ public interface IThreadTaskObserver {
    * 获取线程当前进度
    */
   long getThreadProgress();
+
+  /**
+   * 重置线程进度
+   */
+  void resetThreadProgress(long progress);
 }

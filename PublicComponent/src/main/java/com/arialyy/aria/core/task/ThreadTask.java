@@ -383,6 +383,15 @@ public class ThreadTask implements IThreadTask, IThreadTaskObserver {
     return mRangeProgress;
   }
 
+  @Override
+  public synchronized void resetThreadProgress(long progress) {
+    ALog.w(TAG, String.format(
+        "resetThreadProgress, threadId=%s, oldRangeProgress=%s, newRangeProgress=%s, oldLastRangeProgress=%s",
+        mRecord.threadId, mRangeProgress, progress, mLastRangeProgress));
+    mRangeProgress = progress;
+    mLastRangeProgress = progress;
+  }
+
   /**
    * 取消任务
    */
